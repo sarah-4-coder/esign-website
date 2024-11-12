@@ -11,8 +11,8 @@ export default function SignatureCanvas() {
 
   useEffect(() => {
     const updateCanvasSize = () => {
-      const canvasWidth = Math.min(window.innerWidth - 32, 600) // Subtract 32px for padding
-      const canvasHeight = Math.min(canvasWidth / 2,300) // Max height of 200px
+      const canvasWidth = Math.min(window.innerWidth - 32, 600) 
+      const canvasHeight = Math.min(canvasWidth / 2, 300) 
       setCanvasSize({ width: canvasWidth, height: canvasHeight })
     }
 
@@ -61,7 +61,7 @@ export default function SignatureCanvas() {
     let clientX, clientY
 
     if ('touches' in e) {
-      e.preventDefault() // Prevent scrolling on touch devices
+      e.preventDefault() 
       clientX = e.touches[0].clientX
       clientY = e.touches[0].clientY
     } else {
