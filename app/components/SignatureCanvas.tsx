@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { Button } from '../ui/button'
+// import { Button } from '../ui/button'
 
 export default function SignatureCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -132,13 +132,13 @@ export default function SignatureCanvas() {
           Sign here
         </div>
       </div>
-      <div className="flex space-x-2 w-full max-w-[600px] justify-between">
-        <Button onClick={clearCanvas} variant="outline" className="flex-1">
+      <div className="flex space-x-1 w-[80%] max-w-[600px] justify-between">
+        <button onClick={clearCanvas}  className=" bg-black text-white w-[40%] rounded p-1.5 hover:text-grey ">
           Clear
-        </Button>
-        <Button onClick={downloadSignature} disabled={!hasContent} className="flex-1">
+        </button>
+        <button onClick={downloadSignature} disabled={!hasContent} className={hasContent?"bg-black text-white rounded w-[40%]":"hidden"}>
           Download
-        </Button>
+        </button>
       </div>
     </div>
   )
