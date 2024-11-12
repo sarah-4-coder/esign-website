@@ -1,12 +1,27 @@
 "use client";
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 
 export default function SignatureCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [hasContent, setHasContent] = useState(false); // Track if there's content on the canvas
+  const [hasContent, setHasContent] = useState(false); 
+  const [canvasSize, setCanvasSize] = useState({ width: 300, height: 150 }); 
+
+  
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      const canvasWidth = Math.min(window.innerWidth * 0.8, 600); 
+      const canvasHeight = canvasWidth / 2; 
+      setCanvasSize({ width: canvasWidth, height: canvasHeight });
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     setIsDrawing(true);
@@ -50,7 +65,7 @@ export default function SignatureCanvas() {
     context.beginPath();
     context.moveTo(x, y);
 
-    setHasContent(true); // Set hasContent to true when drawing
+    setHasContent(true);
   };
 
   const clearCanvas = () => {
@@ -60,16 +75,28 @@ export default function SignatureCanvas() {
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       }
     }
-    setHasContent(false); // Reset hasContent when the canvas is cleared
+    setHasContent(false); 
   };
 
   const downloadSignature = () => {
     if (canvasRef.current && hasContent) {
-      const dataUrl = canvasRef.current.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = 'signature.png';
-      link.href = dataUrl;
-      link.click();
+      const scale = 2; 
+      const canvas = canvasRef.current;
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width * scale;
+      tempCanvas.height = canvas.height * scale;
+
+      const tempContext = tempCanvas.getContext('2d');
+      if (tempContext) {
+        tempContext.scale(scale, scale);
+        tempContext.drawImage(canvas, 0, 0);
+
+        const dataUrl = tempCanvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = 'signature.png';
+        link.href = dataUrl;
+        link.click();
+      }
     }
   };
 
@@ -77,8 +104,8 @@ export default function SignatureCanvas() {
     <div className="flex flex-col items-center space-y-4">
       <canvas
         ref={canvasRef}
-        width={500}
-        height={250}
+        width={canvasSize.width}
+        height={canvasSize.height}
         onMouseDown={startDrawing}
         onMouseUp={stopDrawing}
         onMouseOut={stopDrawing}
@@ -87,10 +114,11 @@ export default function SignatureCanvas() {
         onTouchEnd={stopDrawing}
         onTouchMove={draw}
         className="border border-gray-300 rounded-md touch-none"
+        style={{ width: '100%', maxWidth: '600px', height: 'auto' }}
       />
       <div className="flex space-x-2">
         <Button onClick={clearCanvas}>Clear</Button>
-        <Button onClick={downloadSignature} disabled={!hasContent}>Download</Button> {/* Disable if no content */}
+        <Button onClick={downloadSignature} disabled={!hasContent}>Download</Button> 
       </div>
     </div>
   );
