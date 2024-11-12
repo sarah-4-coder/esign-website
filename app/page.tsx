@@ -9,7 +9,7 @@ const SignatureCanvas = dynamic(() => import('./components/SignatureCanvas'), {
 
 export default function Home() {
   return (
-    <main className="flex h-[95vh] flex-col items-center justify-center p-1">
+    <main className="flex h-[95vh] flex-col items-center lg:justify-center p-1 pt-10 lg:pt-0 ">
       <h1 className="text-4xl font-bold mb-8">eSign Website</h1>
       <SignatureCanvas />
     </main>
