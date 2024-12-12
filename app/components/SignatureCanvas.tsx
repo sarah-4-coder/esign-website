@@ -1,7 +1,6 @@
-'use client'
+"use client"
 
 import { useRef, useState, useEffect } from 'react'
-// import { Button } from '../ui/button'
 
 export default function SignatureCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -11,7 +10,7 @@ export default function SignatureCanvas() {
 
   useEffect(() => {
     const updateCanvasSize = () => {
-      const canvasWidth = Math.min(window.innerWidth - 32, 600) 
+      const canvasWidth = Math.min(window.innerWidth - 64, 600) 
       const canvasHeight = Math.min(canvasWidth / 2, 300) 
       setCanvasSize({ width: canvasWidth, height: canvasHeight })
     }
@@ -92,29 +91,17 @@ export default function SignatureCanvas() {
 
   const downloadSignature = () => {
     if (canvasRef.current && hasContent) {
-      const scale = 2
-      const canvas = canvasRef.current
-      const tempCanvas = document.createElement('canvas')
-      tempCanvas.width = canvas.width * scale
-      tempCanvas.height = canvas.height * scale
-
-      const tempContext = tempCanvas.getContext('2d')
-      if (tempContext) {
-        tempContext.scale(scale, scale)
-        tempContext.drawImage(canvas, 0, 0)
-
-        const dataUrl = tempCanvas.toDataURL('image/png')
-        const link = document.createElement('a')
-        link.download = 'signature.png'
-        link.href = dataUrl
-        link.click()
-      }
+      const dataUrl = canvasRef.current.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.download = 'signature.png'
+      link.href = dataUrl
+      link.click()
     }
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4">
-      <div className="w-full max-w-[600px] relative">
+    <div className="space-y-4">
+      <div className="relative bg-white border-2 border-gray-300 rounded-lg shadow-sm overflow-hidden">
         <canvas
           ref={canvasRef}
           width={canvasSize.width}
@@ -126,20 +113,30 @@ export default function SignatureCanvas() {
           onMouseUp={stopDrawing}
           onMouseOut={stopDrawing}
           onMouseMove={draw}
-          className="border border-gray-300 rounded-md touch-none w-full h-auto"
+          className="touch-none w-full h-auto"
         />
-        <div className="absolute bottom-2 left-2 text-xs text-gray-500">
+        <div className="absolute bottom-2 left-2 text-xs text-gray-400">
           Sign here
         </div>
       </div>
-      <div className="flex space-x-1 w-[80%] max-w-[600px] justify-between">
-        <button onClick={clearCanvas}  className=" bg-black text-white w-[40%] rounded p-1.5 hover:text-grey ">
+      <div className="flex space-x-4 justify-center">
+        <button 
+          onClick={clearCanvas}
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors"
+        >
           Clear
         </button>
-        <button onClick={downloadSignature} disabled={!hasContent} className={hasContent?"bg-black text-white rounded w-[40%]":"hidden"}>
+        <button 
+          onClick={downloadSignature} 
+          disabled={!hasContent}
+          className={`px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-colors ${
+            !hasContent && 'opacity-50 cursor-not-allowed'
+          }`}
+        >
           Download
         </button>
       </div>
     </div>
   )
 }
+
